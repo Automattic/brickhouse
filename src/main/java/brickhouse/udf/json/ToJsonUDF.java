@@ -52,8 +52,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.WritableConstantB
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  *  Generate a JSON string from an arbitrary Hive structure.
@@ -351,7 +349,6 @@ public class ToJsonUDF extends GenericUDF {
 
 	private class TimestampInspectorHandle implements InspectorHandle {
 		private TimestampObjectInspector timestampInspector;
-		private DateTimeFormatter isoFormatter = ISODateTimeFormat.dateTimeNoMillis();
 
 		public TimestampInspectorHandle( TimestampObjectInspector insp ) {
 			timestampInspector = insp;
@@ -363,8 +360,7 @@ public class ToJsonUDF extends GenericUDF {
 				gen.writeNull();
 			} else {
 				Timestamp timestamp = timestampInspector.getPrimitiveJavaObject( obj );
-				String timeStr = isoFormatter.print( timestamp.getTime() );
-				gen.writeString( timeStr );
+				gen.writeString( timestamp.toString() );
 			}
 		}
 	}

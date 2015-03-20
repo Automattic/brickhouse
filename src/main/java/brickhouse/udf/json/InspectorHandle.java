@@ -24,8 +24,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspe
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.codehaus.jackson.JsonNode;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 public interface InspectorHandle {
 
@@ -181,7 +179,6 @@ public interface InspectorHandle {
 
 	class PrimitiveHandle implements InspectorHandle {
 		private PrimitiveCategory category;
-		private DateTimeFormatter isoFormatter = ISODateTimeFormat.dateTimeNoMillis();
 
 		public PrimitiveHandle( PrimitiveObjectInspector insp ) throws UDFArgumentException {
 			category = insp.getPrimitiveCategory();
@@ -219,8 +216,7 @@ public interface InspectorHandle {
 				case BOOLEAN:
 					return jsonNode.getBooleanValue();
 				case TIMESTAMP:
-					long time = isoFormatter.parseMillis( jsonNode.getTextValue() );
-					return new Timestamp( time );
+					return Timestamp.valueOf( jsonNode.getTextValue() );
 			}
 			return null;
 		}
